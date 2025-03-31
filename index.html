@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pregnancy Symptom Tracker</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-color: #ffe1f1;
+            color: #333;
+        }
+
+        header {
+            background-color: #f06cb4;
+            padding: 20px 0;
+        }
+
+        h1,
+        h2 {
+            color: #d11141;
+        }
+
+        #selection,
+        #during-stages,
+        #stage-content {
+            margin: 20px auto;
+            width: 90%;
+            max-width: 600px;
+            display: block;
+        }
+
+        .stage-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .stage-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
+        }
+
+        .stage-item img {
+            max-width: 150px;
+            height: 150px;
+            cursor: pointer;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #f8bbd0;
+        }
+
+        .stage-item button,
+        .trimester-buttons button,
+        .back-button,
+        .mood-option,
+        .water-option {
+            padding: 12px 24px;
+            margin: 8px;
+            cursor: pointer;
+            background-color: #e91e63;
+            /* Pink */
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            /* Added smooth transition */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 140px;
+            /* Increased width */
+            height: 45px;
+            /* Increased height */
+        }
+
+        .trimester-buttons_d button {
+            padding: 12px 24px;
+            margin: 8px;
+            cursor: pointer;
+            background-color: #e91e63;
+            /* Pink */
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            /* Added smooth transition */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 180px;
+            /* Increased width */
+            height: 55px;
+            /* Increased height */
+        }
+
+        .stage-item button:hover,
+        .trimester-buttons button:hover,
+        .back-button:hover,
+        .mood-option:hover,
+        .water-option:hover {
+            background-color: #c81e51;
+            /* Darker Pink */
+            transform: scale(1.08);
+            /* Slight scale on hover */
+        }
+
+        .stage-item button:active,
+        .trimester-buttons button:active,
+        .back-button:active,
+        .mood-option:active,
+        .water-option:active {
+            background-color: #a31741;
+            /* Even Darker Pink */
+            transform: scale(0.92);
+            /* Slight scale down on active */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            /* Smaller shadow on active */
+        }
+
+        .symptom-box {
+            border: 1px solid #f8bbd0;
+            padding: 15px;
+            margin: 10px;
+            display: inline-block;
+            text-align: left;
+            background-color: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .symptom-input {
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #f8bbd0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        #stage-content,
+        #during-stages {
+            display: none;
+        }
+
+        .mood-options,
+        .exercise-options,
+        .water-options {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .mood-option,
+        .exercise-option {
+            background-color: #fce6f2;
+            padding: 10px 20px;
+            margin: 8px;
+            border-radius: 25px;
+            cursor: pointer;
+            color: #333;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 140px;
+            height: 45px;
+        }
+
+        .mood-option:hover,
+        .exercise-option:hover {
+            background-color: #f8bbd0;
+            transform: scale(1.05);
+        }
+
+        .mood-option:active,
+        .exercise-option:active {
+            background-color: #f48fb1;
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .water-option {
+            background-color: #fce6f2;
+            padding: 10px 20px;
+            margin: 8px;
+            border-radius: 25px;
+            cursor: pointer;
+            color: rgb(255, 0, 119);
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 140px;
+            height: 45px;
+        }
+
+        .water-option:hover {
+            background-color: #f8bbd0;
+            transform: scale(1.05);
+        }
+
+        .water-option:active {
+            background-color: #f48fb1;
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .mood-option.selected {
+            background-color: #f8bbd0;
+            color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .water-option.selected {
+            background-color: #bbd6f8;
+            color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-button {
+            padding: 12px 24px;
+            margin: 10px;
+            cursor: pointer;
+            background-color: #e91e63;
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-size: 18px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 150px;
+            height: 50px;
+        }
+
+        .back-button:hover {
+            background-color: #c81e51;
+            transform: scale(1.08);
+        }
+
+        .back-button:active {
+            background-color: blue;
+            transform: scale(0.92);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-button::before {
+            /* content: "←"; */
+            margin-right: 5px;
+            font-size: 1.2em;
+        }
+
+        #before-btn,
+        #during-btn,
+        #after-btn {
+            padding: 12px 24px;
+            margin: 8px;
+            cursor: pointer;
+            background-color: #e91e63;
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 140px;
+            height: 45px;
+        }
+
+        #before-btn:hover,
+        #during-btn:hover,
+        #after-btn:hover {
+            background-color: #c81e51;
+            transform: scale(1.08);
+        }
+
+        #before-btn:active,
+        #during-btn:active,
+        #after-btn:active {
+            background-color: blue;
+            transform: scale(0.92);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #before-btn::before {
+            /* content: "←"; */
+            margin-right: 5px;
+            font-size: 1.2em;
+        }
+
+        #during-btn::before {
+            /* content: "←"; */
+            margin-right: 5px;
+            font-size: 1.2em;
+        }
+
+        #after-btn::before {
+            /* content: "←"; */
+            margin-right: 5px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Pregnancy Symptom Tracker</h1>
+    </header>
+
+    <section id="selection">
+        <h2>Welcome to your Pregnancy Symptom Tracker.</h2>
+        <p>Please select the stage you're in:</p>
+        <div class="stage-buttons">
+            <div class="stage-item">
+                <img src="beforepreg.webp" alt="Before Pregnancy">
+                <button id="before-btn">Before</button>
+            </div>
+            <div class="stage-item">
+                <img src="duringpreg.webp" alt="During Pregnancy">
+                <button id="during-btn">During</button>
+            </div>
+            <div class="stage-item">
+                <img src="after.webp" alt="After Pregnancy">
+                <button id="after-btn">After</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="during-stages">
+        <h2>Select Trimester:</h2>
+        <div class="trimester-buttons_d">
+            <button id="first-trimester">1st Trimester (Weeks 1-12)</button>
+            <button id="second-trimester">2nd Trimester (Weeks 13-28)</button>
+            <button id="third-trimester">3rd Trimester (Weeks 29-40)</button>
+        </div>
+        <button class="back-button" onclick="goBack()">Back</button>
+    </section>
+
+    <section id="stage-content">
+        <button class="back-button" onclick="goBack()">Back</button>
+    </section>
+
+    <script>
+        const beforeButton = document.getElementById('before-btn');
+        const duringButton = document.getElementById('during-btn');
+        const afterButton = document.getElementById('after-btn');
+        const selectionDiv = document.getElementById('selection');
+        const duringStagesDiv = document.getElementById('during-stages');
+        const stageContentDiv = document.getElementById('stage-content');
+        const firstTrimesterButton = document.getElementById('first-trimester');
+        const secondTrimesterButton = document.getElementById('second-trimester');
+        const thirdTrimesterButton = document.getElementById('third-trimester');
+        const backButtonDuring = document.querySelector('#during-stages .back-button');  // Select back button within #during-stages
+        const backButtonStageContent = document.querySelector('#stage-content .back-button'); // Select back button within #stage-content
+
+        beforeButton.addEventListener('click', () => {
+            selectionDiv.style.display = 'none';
+            duringStagesDiv.style.display = 'none';
+            stageContentDiv.style.display = 'block';
+            loadStageContent('before');
+        });
+
+        duringButton.addEventListener('click', () => {
+            selectionDiv.style.display = 'none';
+            duringStagesDiv.style.display = 'block';
+            stageContentDiv.style.display = 'none';
+        });
+
+        afterButton.addEventListener('click', () => {
+            selectionDiv.style.display = 'none';
+            duringStagesDiv.style.display = 'none';
+            stageContentDiv.style.display = 'block';
+            loadStageContent('after');
+
+        });
+        function goBackToDuring() {
+            selectionDiv.style.display = 'none';
+            duringStagesDiv.style.display = 'block';
+            stageContentDiv.style.display = 'none';
+        }
+        function goBack() {
+            stageContentDiv.style.display = 'none';
+            duringStagesDiv.style.display = 'none';
+            selectionDiv.style.display = 'block';
+        }
+
+        firstTrimesterButton.addEventListener('click', () => {
+            loadStageContent('first-trimester');
+            duringStagesDiv.style.display = 'none';
+            stageContentDiv.style.display = 'block';
+        });
+
+        secondTrimesterButton.addEventListener('click', () => {
+            loadStageContent('second-trimester');
+            duringStagesDiv.style.display = 'none';
+            stageContentDiv.style.display = 'block';
+        });
+
+        thirdTrimesterButton.addEventListener('click', () => {
+            loadStageContent('third-trimester');
+            duringStagesDiv.style.display = 'none';
+            stageContentDiv.style.display = 'block';
+        });
+
+        backButtonDuring.addEventListener('click', () => {
+            duringStagesDiv.style.display = 'none';
+            selectionDiv.style.display = 'block';
+        });
+
+        backButtonStageContent.addEventListener('click', () => {
+            stageContentDiv.style.display = 'none';
+            selectionDiv.style.display = 'block';
+        });
+
+
+        const moodData = {
+            "Happy": {
+                "exercise": "Walking, Light Yoga",
+                "advice": "Maintain healthy habits",
+                "care": "Continue self-care routines"
+            },
+            "Sad": {
+                "exercise": "Gentle Walking, Light Stretching",
+                "advice": "Talk to a friend or professional",
+                "care": "Rest, Comforting activities"
+            },
+            "Anxious": {
+                "exercise": "Yoga, Deep Breathing, Walking",
+                "advice": "Practice relaxation techniques",
+                "care": "Calming environment, Limit stressors"
+            },
+            "Irritable": {
+                "exercise": "Walking, Light exercise",
+                "advice": "Get enough sleep, Manage stress",
+                "care": "Relaxation, Avoid triggers"
+            },
+            "Calm": {
+                "exercise": "Maintain regular activity",
+                "advice": "Continue healthy lifestyle",
+                "care": "Balanced diet, Rest"
+            },
+            "Energetic": {
+                "exercise": "Moderate exercise, Strength training",
+                "advice": "Use energy productively",
+                "care": "Balanced activity and rest"
+            },
+            "Tired": {
+                "exercise": "Gentle Walking, Light activity",
+                "advice": "Rest, Avoid overexertion",
+                "care": "Prioritize sleep"
+            },
+            "Postpartum Blues": {
+                "exercise": "Light walking, Gentle stretching",
+                "advice": "Seek support, Rest",
+                "care": "Self-care, Support network"
+            },
+            "Postpartum Depression": {
+                "exercise": "Gentle activity as tolerated",
+                "advice": "Professional help is crucial",
+                "care": "Therapy, Medication, Support"
+            },
+            "Fatigue": {
+                "exercise": "Gentle walking, Light Stretching",
+                "advice": "Prioritize rest, Avoid overexertion",
+                "care": "Naps, Relaxing activities"
+            },
+            "Cramps": {
+                "exercise": "Gentle walking, Light Yoga",
+                "advice": "Apply heat, Gentle massage",
+                "care": "Rest, Pain relief if needed"
+            },
+            "Tender Breasts": {
+                "exercise": "Low-impact exercise, Gentle stretching",
+                "advice": "Wear supportive bra, Avoid strenuous activity",
+                "care": "Comfortable clothing, Gentle massage"
+            },
+            "Acne": {
+                "exercise": "Light exercise, Walking",
+                "advice": "Gentle skincare, Stay hydrated",
+                "care": "Clean face, Avoid harsh products"
+            },
+            "Backache": {
+                "exercise": "Prenatal yoga, Light stretching",
+                "advice": "Maintain good posture, Use support pillows",
+                "care": "Rest, Warm compress"
+            },
+            "Headache": {
+                "exercise": "Gentle walking, Light stretches",
+                "advice": "Stay hydrated, Rest in quiet place",
+                "care": "Cold compress, Pain relief as directed"
+            },
+            "Craving": {
+                "exercise": "Light activity, Walking",
+                "advice": "Balanced diet, Manage cravings",
+                "care": "Healthy snacks, Avoid overindulgence"
+            },
+            "Everything is fine": {
+                "exercise": "Regular exercise, Varied activities",
+                "advice": "Maintain healthy lifestyle, Stay active",
+                "care": "Balanced diet, Regular rest"
+            },
+            "Period missed": {
+                "exercise": "",
+                "advice": "Consult a doctor immediately.",
+                "care": "Schedule a medical appointment."
+            }
+        };
+
+        const waterRecommendations = {
+            "before": "Aim for at least 8 glasses (around 2 liters) of water daily.",
+            "first-trimester": "Increase water intake to 8-10 glasses (2-2.5 liters) daily to help with nausea and increased blood volume.",
+            "second-trimester": "Continue drinking 8-10 glasses (2-2.5 liters) daily to support increased blood volume and amniotic fluid.",
+            "third-trimester": "Maintain 8-12 glasses (2-3 liters) daily to prevent dehydration and constipation.",
+            "after": "Increase water intake to 10-12 glasses (2.5-3 liters) daily, especially if breastfeeding, to replenish fluids and support milk production."
+        };
+
+        function generateSymptomBoxes() {
+            return `
+                <div class="symptom-box">
+                    <strong>Mood:</strong>
+                    <div class="mood-options">
+                        <button class="mood-option" onclick="toggleMood(this, 'Happy')">Happy</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Sad')">Sad</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Anxious')">Anxious</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Irritable')">Irritable</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Calm')">Calm</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Energetic')">Energetic</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Tired')">Tired</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Postpartum Blues')">Postpartum Blues</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Postpartum Depression')">Postpartum Depression</button>
+                    </div>
+                </div>
+                <div class="symptom-box">
+                    <strong>Symptoms:</strong>
+                    <div class="mood-options">
+                        <button class="mood-option" onclick="toggleMood(this, 'Fatigue')">Fatigue</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Cramps')">Cramps</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Tender Breasts')">Tender Breasts</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Acne')">Acne</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Backache')">Backache</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Headache')">Headache</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Craving')">Craving</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Everything is fine')">Everything is fine</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Period missed')">Period missed</button>
+                    </div>
+                </div>
+            `;
+        }
+        function generateSymptomBoxes2() {
+            return `
+                <div class="symptom-box">
+                    <strong>Mood:</strong>
+                    <div class="mood-options">
+                        <button class="mood-option" onclick="toggleMood(this, 'Happy')">Happy</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Sad')">Sad</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Anxious')">Anxious</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Irritable')">Irritable</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Calm')">Calm</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Energetic')">Energetic</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Tired')">Tired</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Postpartum Blues')">Postpartum Blues</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Postpartum Depression')">Postpartum Depression</button>
+                    </div>
+                </div>
+                <div class="symptom-box">
+                    <strong>Symptoms:</strong>
+                    <div class="mood-options">
+                        <button class="mood-option" onclick="toggleMood(this, 'Fatigue')">Fatigue</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Cramps')">Cramps</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Tender Breasts')">Tender Breasts</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Acne')">Acne</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Backache')">Backache</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Headache')">Headache</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Craving')">Craving</button>
+                        <button class="mood-option" onclick="toggleMood(this, 'Everything is fine')">Everything is fine</button>
+                    </div>
+                </div>
+            `;
+        }
+        function generateWaterOptions(recommendation) {
+            let options = '<div class="water-options">';
+            for (let i = 1; i <= 12; i++) {
+                options += `<button class="water-option" onclick="selectWater(${i})">Glass ${i}</button>`;
+            }
+            options += `</div><p>Recommendation: ${recommendation}</p>`;
+            return options;
+        }
+
+        function loadStageContent(stage) {
+            let content = '';
+            let waterRecommendation = waterRecommendations[stage] || "Consult a doctor for water intake recommendation";if (stage === 'before') {
+                content = `
+                    <h2>Symptoms Before Pregnancy</h2>
+                    ${generateSymptomBoxes()}
+                    <div class="symptom-box" id="exercise-box">
+                        <strong>Exercise:</strong>
+                        <p id="exercise-text"></p>
+                    </div>
+                    <div class="symptom-box" id="advice-box">
+                        <strong>Advice:</strong>
+                        <p id="advice-text"></p>
+                    </div>
+                    <div class="symptom-box" id="care-box">
+                        <strong>Care:</strong>
+                        <p id="care-text"></p>
+                    </div>
+                    <div class="symptom-box">Amount of Water: ${generateWaterOptions(waterRecommendation)}</div>
+                    <div class="sympt-box">Period Colour: <select class="symptom-input" id="period-color">
+                        <option value="light-red">Light Red</option>
+                        <option value="dark-red">Dark Red</option>
+                        <option value="brown">Brown</option>
+                        <option value="pink">Pink</option>
+                    </select></div><button class="back-button" onclick="goBack()">Back</button>
+                `;
+            } else if (stage === 'first-trimester' || stage === 'second-trimester' || stage === 'third-trimester' || stage === 'after') {
+                content = `
+                    <h2>${stage.replace('-', ' ')}</h2>
+                    ${generateSymptomBoxes2()}
+                    <div class="symptom-box" id="exercise-box">
+                        <strong>Exercise:</strong>
+                        <p id="exercise-text"></p>
+                    </div>
+                    <div class="symptom-box" id="advice-box">
+                        <strong>Advice:</strong>
+                        <p id="advice-text"></p>
+                    </div>
+                    <div class="symptom-box" id="care-box">
+                        <strong>Care:</strong>
+                        <p id="care-text"></p>
+                    </div>
+                    <div class="symptom-box">Water: ${generateWaterOptions(waterRecommendation)}</div>
+                    <button class="back-button" onclick="goBackToDuring()">Back</button>
+                `;
+            }
+
+            stageContentDiv.innerHTML = content;
+
+            if (stage === 'before') {
+                const periodColorSelect = document.getElementById('period-color');
+                if (periodColorSelect) {
+                    periodColorSelect.addEventListener('change', updateAdviceAndCare);
+                }
+            }
+        }
+
+        let selectedMoods = [];
+        let selectedWater = 0;
+
+        function toggleMood(element, mood) {
+            if (selectedMoods.includes(mood)) {
+                selectedMoods = selectedMoods.filter(item => item !== mood);
+                element.classList.remove('selected');
+            } else {
+                selectedMoods.push(mood);
+                element.classList.add('selected');
+            }
+            updateMoodInfo(selectedMoods);
+            updateAdviceAndCare();
+        }
+
+        function selectWater(glasses) {
+            selectedWater = glasses;
+            const waterOptions = document.querySelectorAll('.water-option');
+            waterOptions.forEach((option, index) => {
+                if (index < glasses) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+        }
+
+        function updateMoodInfo(moods) {
+            const exerciseText = document.getElementById('exercise-text');
+            const adviceText = document.getElementById('advice-text');
+            const careText = document.getElementById('care-text');
+
+            let exercise = "";
+            let advice = "";
+            let care = "";
+
+            moods.forEach(mood => {
+                if (moodData[mood]) {
+                    exercise += moodData[mood].exercise + ", ";
+                    advice += moodData[mood].advice + ", ";
+                    care += moodData[mood].care + ", ";
+                }
+            });
+
+            exerciseText.textContent = exercise.slice(0, -2);
+            adviceText.textContent = advice.slice(0, -2);
+            careText.textContent = care.slice(0, -2);
+        }
+
+        function updateAdviceAndCare() {
+            const periodColor = document.getElementById('period-color')?.value;
+            const exerciseText = document.getElementById('exercise-text');
+            const adviceText = document.getElementById('advice-text');
+            const careText = document.getElementById('care-text');
+
+            let exercise = "";
+            let advice = "";
+            let care = "";
+
+            if (selectedMoods.length > 0) {
+                selectedMoods.forEach(mood => {
+                    if (moodData[mood]) {
+                        exercise += moodData[mood].exercise + ", ";
+                        advice += moodData[mood].advice + ", ";
+                        care += moodData[mood].care + ", ";
+                    }
+                });
+            }
+
+            if (periodColor) {
+                switch (periodColor) {
+                    case 'light-red':
+                        advice += "Light red period may indicate a light flow. Consult a doctor if you have concerns. ,";
+                        care += "Use regular absorbency pads or tampons. ,";
+                        break;
+                    case 'dark-red':
+                        advice += "Dark red period is normal. ,";
+                        care += "Use regular absorbency pads or tampons. ,";
+                        break;
+                    case 'brown':
+                        advice += "Brown period usually indicates older blood. It's common at the beginning or end of your period. ,";
+                        care += "Use regular absorbency pads or tampons. ,";
+                        break;
+                    case 'pink':
+                        advice += "Pink period may indicate light flow or spotting. Could be due to hormonal changes. Consult a doctor if you have concerns. ,";
+                        care += "Use a pantyliner or light absorbency pad. ,";
+                        break;
+                    default:
+                        advice += "Please select a period color. ,";
+                        care += "Please select a period color. ,";
+                }
+            }
+            exerciseText.textContent = exercise.slice(0, -2) || "No exercise information available.";
+            adviceText.textContent = advice.slice(0, -2) || "No advice available.";
+            careText.textContent = care.slice(0, -2) || "No care information available.";
+        }
+    </script>
+</body>
+
+</html>
